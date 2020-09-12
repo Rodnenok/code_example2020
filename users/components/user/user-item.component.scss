@@ -1,0 +1,19 @@
+@import "variables";
+@import "mixins";
+
+.btn-invite {
+  @include typography($font-size-xs);
+  padding: 0.5rem 0.7rem;
+  background-color: $selago;
+  border: 0.1rem solid $selago;
+  color: $royal_blue;
+  border-radius: 0.3rem;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.gray {
+  color: $lynch;
+}

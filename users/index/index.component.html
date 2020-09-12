@@ -1,0 +1,51 @@
+<div class="d-flex h-100">
+  <div class="content margin">
+    <div class="content__header d-flex align-items-center"
+         [ngClass]="{'content__header--without-border': isCreateMode}">
+      <button *ngxPermissionsOnly="permission.store"
+              class="btn btn-primary"
+              (click)="create()">
+        <span class="icon"
+              [inlineSVG]="'assets/icons/plus.svg'"></span>
+        Добавить пользователя
+      </button>
+      <div class="ml-5 flex-grow-1">
+        <app-filters [controlsScheme]="controlsScheme"></app-filters>
+      </div>
+    </div>
+    <div class="overflow-hidden">
+    </div>
+    <!-- list -->
+    <div class="content__scroll full-height"
+         [ngClass]="{'content__scroll--add-block': isCreateMode}">
+      <div class="drag-drop"
+           (appDeferLoad)="onScroll()">
+        <div *ngFor="let item of data"
+             #element>
+          <ng-container *ngxPermissionsOnly="permission.show; else elseBlock;">
+            <app-user-item class="outline-none"
+                           [routerLink]="[item.id]"
+                           routerLinkActive="link-active"
+                           queryParamsHandling="merge"
+                           [user]="item"></app-user-item>
+          </ng-container>
+
+          <ng-template #elseBlock>
+            <app-user-item class="outline-none"
+                           [user]="item"></app-user-item>
+          </ng-template>
+        </div>
+      </div>
+
+      <app-error-display [items]="items"
+                         [error]="httpError"></app-error-display>
+    </div>
+  </div>
+  <div class="content content--xl ml-0 margin"
+       [ngClass]="{'content--xl-hiden': !isShow}">
+    <router-outlet (activate)="onActivate(true)"
+                   (deactivate)="onActivate(false)"></router-outlet>
+  </div>
+</div>
+
+<ngx-ui-loader [loaderId]="loaderId"></ngx-ui-loader>

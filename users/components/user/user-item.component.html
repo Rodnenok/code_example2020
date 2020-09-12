@@ -1,0 +1,46 @@
+<div class="index-list-item base-padding pointer d-flex align-items-baseline">
+  <div class="d-flex align-items-center w-100 ">
+    <div class="mr-3">
+      <app-user *ngIf="user.email_verified_at"
+                [user]="user.name"></app-user>
+      <div *ngIf="user.email_verified_at == null"
+           class="user">
+        <div class="user d-flex align-items-center">
+          <div>
+            <span [inlineSVG]="'assets/icons/avatar-empty.svg'"></span>
+          </div>
+          <p class="user-name user-name--light mb-0 ml-2 mw-100">
+            {{user.name}}
+          </p>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="user.email_verified_at == null">
+      <button type="button"
+              class="btn-invite"
+              stopPropagationClick
+              [class.disabled]="emailResended"
+              (click)="resend()">
+        <span *ngIf="!emailResended">Пригласить</span>
+        <span class="gray"
+              *ngIf="emailResended">Приглашение отправлено</span></button>
+    </div>
+    <div class="d-flex align-items-baseline ml-auto mr-3">
+      <p class="title-block ml-auto"
+         *ngIf="user.roles?.length">
+        {{user.roles[0].display_name}}
+      </p>
+      <a *ngIf="user.email"
+         class="text-decoration-none"
+         [href]="'mailto:' + user.email"
+         target="_blank"
+         stopPropagationClick>
+        <div class="mb-0 card-subtitle ml-3">{{user.email}}</div>
+      </a>
+      <app-notification class="ml-3"
+                        [title]="user?.created_at | date: 'dd MMM yyyy'"
+                        [type]="'inline'"
+                        [notificateClasses]="'in-progress'"></app-notification>
+    </div>
+  </div>
+</div>

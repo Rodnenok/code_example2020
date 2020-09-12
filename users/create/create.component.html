@@ -1,0 +1,148 @@
+<div class="position-relative">
+  <div class="content__header content__header--xl d-flex align-items-center">
+
+    <h4 class="content__title">
+      Добавить пользователя
+    </h4>
+
+    <div class="ml-auto d-flex">
+
+      <button class="pointer btn btn-empty"
+              [inlineSVG]="'assets/icons/close.svg'"
+              (click)="close()"></button>
+    </div>
+
+  </div>
+
+  <!-- <div class="content__access d-flex align-items-center justify-content-between">
+    <span class="content__access__title">
+      Ограниченный доступ
+    </span>
+
+    <a [routerLink]="['#']"
+       routerLinkActive="router-link-active"
+       class="link link-primary">
+      Настройки доступа
+    </a>
+
+  </div> -->
+
+  <div class="pt-4 content__form d-flex flex-column">
+
+    <form [formGroup]="form"
+          *ngIf="form"
+          id="form_1"
+          (ngSubmit)="save()"
+          class="form d-flex flex-column">
+
+      <div class="form-group">
+        <input type="text"
+               appAutofocus
+               formControlName="name"
+               class="form-control form-control--empty form-control--big"
+               placeholder="ФИО пользователя">
+        <val-errors controlName="name"></val-errors>
+
+      </div>
+
+      <!-- Email -->
+      <div class="form-group-item align-items-baseline">
+        <label class="mb-0 form-group-item__title "
+               for="email">
+          Логин
+        </label>
+        <div class="d-flex flex-column">
+          <input formControlName="email"
+                 class="form-control-card pointer"
+                 id="email"
+                 placeholder="Введите email">
+          <val-errors controlName="email"></val-errors>
+        </div>
+      </div>
+
+      <!-- Группа -->
+      <div class="form-group-item">
+        <p class="mb-0 form-group-item__title ">
+          Группа
+        </p>
+
+        <div class="form-group-item__field--xl pointer">
+          <ng-select [items]="roles"
+                     [searchable]="false"
+                     [closeOnSelect]="false"
+                     [maxSelectedItems]="100"
+                     bindLabel="display_name"
+                     [multiple]="true"
+                     formControlName="roles"
+                     [placeholder]="'Добавить группу'">
+
+            <!-- Custom label -->
+            <ng-template ng-multi-label-tmp
+                         let-items="items">
+              <ng-container *ngIf="items.length === 1">
+                <div class="ng-value"
+                     *ngFor="let item of items | slice:0:1;">
+                  {{ item.display_name }}
+                  <!-- <span #remove
+                        class="svg"
+                        [inlineSVG]="'assets/icons/select-clear.svg'"></span> -->
+                </div>
+              </ng-container>
+              <div class="ng-value"
+                   *ngIf="items.length > 1">
+                Ответственных {{ items?.length }}
+                <!-- <span #remove
+                      class="svg"
+                      [inlineSVG]="'assets/icons/select-clear.svg'"></span> -->
+              </div>
+            </ng-template>
+          </ng-select>
+        </div>
+      </div>
+
+      <button type="button"
+              class="collapse-btn"
+              (click)="isCollapsed = !isCollapsed"
+              [attr.aria-expanded]="!isCollapsed"
+              aria-controls="collapseExample">
+        <span class="collapse-arrow"
+              [inlineSVG]="!isCollapsed ? 'assets/icons/arrow-down.svg' : 'assets/icons/collapse-arrow-right.svg'"></span>
+        Контакты
+      </button>
+
+      <div id="collapseExample"
+           [ngbCollapse]="isCollapsed">
+        <ng-container formArrayName="contacts">
+
+          <div *ngFor="let pr of form.get('contacts')['controls']; let i = index"
+               [formGroupName]="i"
+               class="form-group-item align-items-baseline">
+            <label class="mb-0 form-group-item__title "
+                   for="{{i}}">
+              {{pr.get('name').value | titlecase}}
+
+            </label>
+            <div class="d-flex flex-column">
+              <input formControlName="contact"
+                     class="form-control-card pointer"
+                     id="{{i}}"
+                     placeholder="Добавить">
+              <val-errors controlName="contact"></val-errors>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+    </form>
+    <div class="document-info__btn-action card-add-btn">
+      <button *ngxPermissionsOnly="permission.store"
+              type="submit"
+              form="form_1"
+              class="btn btn-primary btn-small">
+        Добавить пользователя
+      </button>
+    </div>
+  </div>
+
+  <ngx-ui-loader [loaderId]="loaderId"></ngx-ui-loader>
+</div>

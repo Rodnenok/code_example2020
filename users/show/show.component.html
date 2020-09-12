@@ -1,0 +1,174 @@
+<div class="position-relative">
+  <div class="content__header content__header--xl d-flex align-items-center">
+
+    <h4 class="content__title">
+      Профиль пользователя
+    </h4>
+
+    <div class="ml-auto d-flex">
+
+      <button class="pointer btn btn-empty"
+              [inlineSVG]="'assets/icons/close.svg'"
+              (click)="goBack()"></button>
+    </div>
+
+  </div>
+
+  <!-- <div class="content__access d-flex align-items-center justify-content-between">
+    <span class="content__access__title">
+      Ограниченный доступ
+    </span>
+
+    <a [routerLink]="['#']"
+       routerLinkActive="router-link-active"
+       class="link link-primary">
+      Настройки доступа
+    </a>
+
+  </div> -->
+
+  <div class="content__body">
+
+    <form *ngIf="form"
+          [formGroup]="form"
+          id="form_1"
+          (ngSubmit)="save()"
+          class="form d-flex flex-column pt-4">
+      <ngb-tabset [destroyOnHide]="false"
+                  class="full-height">
+        <ngb-tab title="Профиль"
+                 id="ngb-tab-0"
+                 class="nav-link">
+          <ng-template ngbTabContent>
+            <div class="pt-4 content__form content__form--small">
+              <div class="form-group">
+                <input type="text"
+                       formControlName="name"
+                       class="form-control form-control--empty form-control--big"
+                       placeholder="ФИО пользователя">
+                <val-errors controlName="name"></val-errors>
+              </div>
+
+              <!-- Email -->
+              <div class="form-group-item align-items-baseline">
+                <label class="mb-0 form-group-item__title "
+                       for="email">
+                  Email
+                </label>
+                <div class="d-flex flex-column">
+                  <input formControlName="email"
+                         class="form-control-card pointer"
+                         id="email"
+                         placeholder="Введите email">
+                  <val-errors controlName="email"></val-errors>
+                </div>
+              </div>
+
+              <!-- Группа -->
+              <div class="form-group-item">
+                <label class="mb-0 form-group-item__title ">
+                  Группа
+                </label>
+
+                <div class=" form-group-item__field--xl pointer">
+                  <ng-select [items]="roles"
+                             [searchable]="false"
+                             [closeOnSelect]="false"
+                             appendTo="body"
+                             [maxSelectedItems]="100"
+                             bindLabel="display_name"
+                             [multiple]="true"
+                             formControlName="roles"
+                             [placeholder]="'Добавить группу'">
+
+                    <!-- Custom label -->
+                    <ng-template ng-multi-label-tmp
+                                 let-items="items">
+                      <ng-container *ngIf="items.length === 1">
+                        <div class="ng-value"
+                             *ngFor="let item of items | slice:0:1;">
+                          {{ item.display_name }}
+                        </div>
+                      </ng-container>
+                      <div class="ng-value"
+                           *ngIf="items.length > 1">
+                        Выбрано {{ items?.length }}
+                      </div>
+                    </ng-template>
+                  </ng-select>
+                </div>
+              </div>
+
+            </div>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab title="Контакты"
+                 *ngIf="contacts?.length"
+                 id="ngb-tab-1"
+                 class="nav-link">
+          <ng-template ngbTabContent>
+
+            <div class="pt-4 content__form content__form--small">
+              <ng-container formArrayName="contacts">
+
+                <div *ngFor="let pr of form.get('contacts')['controls']; let i = index"
+                     [formGroupName]="i"
+                     class="form-group-item align-items-baseline">
+                  <label class="mb-0 form-group-item__title "
+                         for="{{i}}">
+                    {{pr.get('name').value | titlecase}}
+
+                  </label>
+                  <div class="d-flex flex-column">
+                    <input formControlName="contact"
+                           class="form-control-card pointer"
+                           [id]="i"
+                           placeholder="Добавить">
+                    <val-errors controlName="contact"></val-errors>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </ng-template>
+        </ngb-tab>
+      </ngb-tabset>
+    </form>
+  </div>
+
+  <div class="ml-5"
+       *ngxPermissionsOnly="permission.update">
+    <button class="btn btn-link btn-small mr-auto mt-4 mb-3 pl-0"
+            type="button"
+            [class.disabled]="emailResended"
+            *ngIf="!item?.email_verified_at && item?.is_active && !isLoading"
+            (click)="resend()">Отправить приглашение снова</button>
+  </div>
+
+  <div class="content__footer d-flex align-items-center justify-content-between"
+       *ngxPermissionsOnly="permission.update">
+    <button [ngClass]="{visible: item?.can_force_delete}"
+            type="button"
+            class="btn btn-outline-danger hidden"
+            (click)="deleteUser()">Удалить</button>
+    <div class="d-flex">
+      <ng-container>
+        <button type="button"
+                *ngIf="item?.is_active; else activate"
+                class="btn btn-light"
+                (click)="deactivateUser()">Деактивировать</button>
+        <ng-template #activate>
+          <button class="btn btn-light"
+                  type="button"
+                  (click)="activateUser()">Активировать</button>
+        </ng-template>
+      </ng-container>
+      <button type="submit"
+              form="form_1"
+              class="btn btn-primary ml-3">
+        Обновить
+      </button>
+    </div>
+  </div>
+
+  <ngx-ui-loader [loaderId]="loaderId"></ngx-ui-loader>
+</div>
